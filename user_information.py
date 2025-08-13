@@ -57,7 +57,7 @@ class UserInput:
             self.research_topics = input("What is the name of your research topics: ").upper()
 
             if self.research_topics is None or len(self.research_topics) <= 30:
-                print("Invalid Research Topic\nResearch Topic Length must be greater than 30\nCHECK THE RESEARCH TOPIC AND TRY AGAIN!!!\n".upper())
+                print("\nInvalid Research Topic\nResearch Topic Length must be greater than 30\nCHECK THE RESEARCH TOPIC AND TRY AGAIN!!!\n".upper())
                 self.check_info = False
             else:
                 self.check_info = True
@@ -79,7 +79,7 @@ class UserInput:
             word_numbers = len(self.research_abstract.split(" "))
 
             if self.research_abstract is None or word_numbers < 100:
-                print("Invalid Abstract From Research\nAbstract length must be greater than 99\nCHECK THE ABSTRACT AND TRY AGAIN!!!\n".upper())
+                print("\nInvalid Abstract From Research\nAbstract length must be greater than 99\nCHECK THE ABSTRACT AND TRY AGAIN!!!\n".upper())
                 self.check_info = False
             else:
                 self.check_info = True
@@ -127,7 +127,7 @@ class UserInput:
             is_info_valid = input("The information provided above are they correct before going ahead (yes/no)?: ").lower()
             match is_info_valid:
                 case "yes":
-                    print("Thanks!!! Information can't be re-edited again\n")
+                    print("\nThanks!!! Information can't be re-edited again\n")
                     self.user_research_abstract()
                     self.check_info = True
                 case "no":
@@ -137,7 +137,7 @@ class UserInput:
                     self.user_research_abstract()
                     self.check_info = True
                 case _:
-                    print("Wrong Input[Kindly input 'yes/no']\nTry again!!!")
+                    print("\nWrong Input[Kindly input 'yes/no']\nTry again!!!\n")
                     self.check_info = False
 
         return self.research_abstract

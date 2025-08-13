@@ -3,22 +3,48 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 import textstat
 import json
+from user_information import UserInput
 
+# This is a global variable for the save_abstract_analysis function
 save_format = ""
 user_format = ""
 file_name = ""
 
 
 def save_abstract_analysis(save, abstract_text, readability, keywords, *args):
+    """
+    Saves the result of an abstract analysis as either a text file or a JSON file.
+
+    Parameters:
+    - save (str): "yes" to trigger saving the result; any other value skips saving.
+    - abstract_text (str): The raw abstract analysis text to save if saving as TXT.
+    - readability (tuple): A tuple containing word count, character count, readability scores, and feedback.
+        Format: (total_words, total_characters, scores_list, feedback_str)
+    - keywords (dict): A dictionary of keyword-frequency pairs (e.g., {'AI': 12.5, 'ML': 8.3})
+    - *args (tuple): Additional metadata about the analysis such as:
+        args[0] = name of the author/researcher
+        args[1] = research topic
+
+    Behavior:
+    - Asks user to input a file name and select the save format (TXT or JSON).
+    - Saves the abstract analysis either as plain text or formatted JSON in a designated directory.
+    - If input or file operations fail, appropriate messages are printed.
+    """
+
+    # Declare global variables to store format and filename preferences
     global user_format, save_format, file_name
     check_info = False
+
+    # Check if user wants to save the file
     if save == "yes":
         file_name = input("\nWhat the name of the file: ").lower()
+        # If filename is left empty, use default name
         if file_name == "":
             file_name = "Abstract_Analysis"
+        # Loop until user provides a valid file format
         while not check_info:
             user_format = input("\nHow do you want the file to be saved TEXT/JSON file: ").lower()
-
+            # Match the user's input to either 'text' or 'json'
             match user_format:
                 case "text":
                     check_info = True
@@ -26,16 +52,19 @@ def save_abstract_analysis(save, abstract_text, readability, keywords, *args):
                 case "json":
                     check_info = True
                     save_format = "json"
-                case _:
+                case _:  # Invalid input handling
                     print("\nInvalid input\nKindly input TEXT/JSON")
                     check_info = False
 
+        # Attempt to open the file in write-text mode in specified folder
         try:
             with open(file=f"Abstract_Analyzer_files/{file_name}.{save_format}", mode="wt") as file:
+                # If saving as plain text, write only the abstract
                 if user_format == "text":
                     file.write(abstract_text)
                     print("The Abstract Analysis is saved as a text file\nThank You!!!")
                 else:
+                    # If saving as JSON, package data into a structured dictionary
                     data = {
                         "name": args[0],
                         "research topic": args[1],
@@ -45,159 +74,16 @@ def save_abstract_analysis(save, abstract_text, readability, keywords, *args):
                         "feedback": readability[3],
                         "keywords": [f"{key}:{value}%" for key, value in keywords.items()]
                     }
+                    # Format dictionary as a readable JSON string and save JSON to file
                     json_data = json.dumps(data, indent=4)
 
                     file.write(json_data)
                     print("The Abstract Analysis is saved as a Json file\nThank You!!!")
+        # Handle file writing errors gracefully
         except FileNotFoundError as e:
             print(f"Error:\n{e}\nFILE NOT SAVED")
     else:
         print("Thanks for using the Abstract Analysis Tools")
-
-
-class UserInput:
-    """
-        Handles the collection and validation of user input for academic research analysis.
-
-        Attributes:
-            name (str): User's full name.
-            research_topics (str): Title of the user's research topic.
-            research_abstract (str): Body of the research abstract.
-            check_info (bool): Flag used to control validation loops.
-
-        Methods:
-            user_name(): Prompts and validates the user's full name.
-            user_research_topic(): Prompts and validates the research topic title.
-            user_research_abstract(): Prompts and validates the research abstract.
-            user_information(): Interactive interface for collecting all necessary input and confirming accuracy.
-    """
-
-    # Store user inputs and track input validity
-    def __init__(self):
-        self.name = None
-        self.research_topics = None
-        self.research_abstract = None
-        self.save_analysis = None
-        self.check_info = False  # Control flow for validation loops
-
-    def user_name(self):
-        """
-            Prompts the user to input their full name.
-            Validates that the input contains only alphabetic characters.
-
-            Returns:
-                str: The validated full name in uppercase.
-        """
-        while not self.check_info:
-            self.name = input("Kindly input your full name: ").upper()
-            check_name = self.name.replace(" ", "").upper()
-
-            if not check_name.isalpha() or self.name is None:
-                print("Invalid Name\nCheck the Name and Try Again!!!\n".upper())
-                self.check_info = False
-            else:
-                self.check_info = True
-
-        return self.name
-
-    def user_research_topic(self):
-        """
-            Prompts the user to input their research topic.
-            Validates that the topic length exceeds 30 characters.
-
-            Returns:
-                str: The validated research topic in uppercase.
-        """
-        self.check_info = False
-
-        while not self.check_info:
-            self.research_topics = input("What is the name of your research topics: ").upper()
-
-            if self.research_topics is None or len(self.research_topics) <= 30:
-                print("Invalid Research Topic\nResearch Topic Length must be greater than 30\nCHECK THE RESEARCH TOPIC AND TRY AGAIN!!!\n".upper())
-                self.check_info = False
-            else:
-                self.check_info = True
-
-        return self.research_topics
-
-    def user_research_abstract(self):
-        """
-            Prompts the user to paste the research abstract.
-            Validates that the abstract contains at least 100 words.
-
-            Returns:
-                str: The validated research abstract as a string.
-        """
-        self.check_info = False
-
-        while not self.check_info:
-            self.research_abstract = input("Kindly paste the research abstract here: ")
-            word_numbers = len(self.research_abstract.split(" "))
-
-            if self.research_abstract is None or word_numbers < 100:
-                print("Invalid Abstract From Research\nAbstract length must be greater than 99\nCHECK THE ABSTRACT AND TRY AGAIN!!!\n".upper())
-                self.check_info = False
-            else:
-                self.check_info = True
-
-        return self.research_abstract
-
-    def save_abstract(self):
-        self.check_info = False
-
-        while not self.check_info:
-            self.save_analysis = input("\nDo you want to save your analysis YES/NO: ").lower()
-
-            match self.save_analysis:
-                case "yes" | "no":
-                    self.check_info = True
-                case _:
-                    print("\nInvalid input\nKindly input YES/NO")
-                    self.check_info = False
-
-        return self.save_analysis
-
-    def user_information(self):
-        """
-           Guides the user through inputting and confirming:
-           - Full Name
-           - Research Topic
-           - Research Abstract
-
-           Allows the user one opportunity to edit incorrect information.
-
-           Returns:
-               str: The final and confirmed research abstract.
-        """
-
-        print("""
-                NOTE: ALL INFORMATION MUST BE IN WORDS AND INFORMATION CAN ONLY BE EDITED ONCE
-                KINDLY INPUT THE FOLLOWING INFORMATION: [Full Name, Research Topic, Research Abstract]
-                """)
-        self.user_name()
-        self.user_research_topic()
-
-        self.check_info = False
-        print(f"\nCHECK THE INFORMATION WELL\nName: {self.name}\nResearch Topic: {self.research_topics}\n")
-        while not self.check_info:
-            is_info_valid = input("The information provided above are they correct before going ahead (yes/no)?: ").lower()
-            match is_info_valid:
-                case "yes":
-                    print("Thanks!!! Information can't be re-edited again\n")
-                    self.user_research_abstract()
-                    self.check_info = True
-                case "no":
-                    print("\nkindly input your right information well\n")
-                    self.user_name()
-                    self.user_research_topic()
-                    self.user_research_abstract()
-                    self.check_info = True
-                case _:
-                    print("Wrong Input[Kindly input 'yes/no']\nTry again!!!")
-                    self.check_info = False
-
-        return self.research_abstract
 
 
 class AbstractAnalyzer(UserInput, TfidfVectorizer):
@@ -307,6 +193,7 @@ class AbstractAnalyzer(UserInput, TfidfVectorizer):
         return [word_count, char_count, reading_ease, feedback]
 
 
+# Instantiate your abstract analyzer class
 abstract_analyser = AbstractAnalyzer()
 abstract_topic = abstract_analyser.abstract_topic_classification()
 abstract_readability = abstract_analyser.abstract_complexity()
@@ -314,6 +201,7 @@ abstract_keyword = abstract_analyser.abstract_keywords()
 
 keyword_percentage = [f"{key}:{value}%" for key, value in abstract_keyword.items()]
 
+# Compose the full abstract analysis summary using f-string formatting
 abstract_analysis = f"""\nTHE ACADEMIC CONFERENCE IS FOCUSED ON {abstract_topic.upper()} DISCIPLINE"
                             
     THIS IS THE ANALYSIS OF THE ABSTRACT PASTED FROM YOUR RESEARCH PAPER:
@@ -329,6 +217,7 @@ abstract_analysis = f"""\nTHE ACADEMIC CONFERENCE IS FOCUSED ON {abstract_topic.
 
 print(abstract_analysis)
 
+# Instantiate the UserInput class to ask whether to save the analysis
 user = UserInput()
 abstract_save = user.save_abstract()
 save_abstract_analysis(abstract_save, abstract_analysis, abstract_readability, abstract_keyword, abstract_analyser.name, abstract_analyser.research_topics)

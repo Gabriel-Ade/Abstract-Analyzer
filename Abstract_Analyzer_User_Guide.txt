@@ -1,0 +1,61 @@
+Purpose:
+This tool helps researchers analyze and save insights from their academic abstracts, focusing on readability, keyword relevance, and research topic classification.
+
+Step-by-Step Guide:
+1. User Information Input
+You’ll be prompted to provide the following:
+
+	Full Name (e.g., Oluwatosin Lazarus)
+
+	Research Topic (e.g., Effects of Air Pollution on Lung Health)
+
+	Research Abstract (Paste full abstract text)
+
+Note: Once submitted, the information cannot be edited again, so please review it carefully before confirming.
+
+2. Abstract Analysis
+The tool automatically performs:
+
+	Discipline Classification: Determines the conference domain (e.g., Environmental Science)
+
+	Readability Metrics: Calculates word count, character count, readability score, and gives constructive feedback.
+
+	Keyword Extraction: Identifies top keywords used and calculates their frequency as percentages.
+
+You’ll see a generated analysis like:
+
+text
+THE ACADEMIC CONFERENCE IS FOCUSED ON ENVIRONMENTAL SCIENCE DISCIPLINE
+
+THIS IS THE ANALYSIS OF THE ABSTRACT PASTED FROM YOUR RESEARCH PAPER:
+    Username: OLUWATOSIN LAZARUS
+    Research Topic: EFFECTS OF AIR POLLUTION ON LUNG HEALTH
+    Total words in Abstract: 190
+    Total characters in Abstract: 1339
+    Abstract readability score: 11.3
+    Abstract feedback: [Constructive notes on accessibility and engagement]
+    Abstract keywords: ['air:0.37%', 'pollution:0.37%', ...]
+
+3. Saving the Analysis
+You’ll be asked:
+
+	Do you want to save the analysis? (YES/NO)
+
+	Filename: Provide a custom name (e.g. Academic Abstract)
+
+	File Format: Choose between:
+		"TEXT" — saves raw analysis as a .txt file
+
+		"JSON" — saves structured data in .json format
+
+Example Output Message: The Abstract Analysis is saved as a Json file Thank You!!!
+
+Where It’s Stored:
+Files are saved in the Abstract_Analyzer_files/ directory with the chosen filename and format.
+
+Tips:
+Ensure all fields are accurate before confirming.
+
+Use the JSON format if you need structured data for downstream tools or dashboards.
+
+Text format is great for quick human-readable exports.
